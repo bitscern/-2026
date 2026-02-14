@@ -33,6 +33,12 @@ export interface WorkplaceData {
   compatibility: string;
 }
 
+export interface MoleData {
+  position: string;
+  nature: string; // 吉 / 凶 / 平
+  meaning: string;
+}
+
 export interface AnalysisResult {
   score: number;
   fiveElement: FiveElement;
@@ -46,6 +52,7 @@ export interface AnalysisResult {
   hobbies: string[];
   auraStatus: string;
   auraMessage: string;
+  moles: MoleData[];
 }
 
 export type AppView = 'home' | 'scanner' | 'report' | 'library' | 'about';
