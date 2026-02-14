@@ -9,6 +9,7 @@ const SCANNING_STEPS = [
   "正在开启灵鉴镜...",
   "观测天庭、地阁气韵...",
   "拆解五岳格局...",
+  "正在辨析精气神...",
   "溯源因果心性...",
   "正在誊写宗师判词..."
 ];
@@ -24,14 +25,13 @@ const App: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // 模拟动态步进文案
+  // 模拟动态步进文案，增强沉浸感
   useEffect(() => {
-    // Fix: Use 'any' type for interval to avoid NodeJS namespace error in browser environment
     let interval: any;
     if (isScanning) {
       interval = setInterval(() => {
         setScanningStep(prev => (prev + 1) % SCANNING_STEPS.length);
-      }, 2000);
+      }, 2500);
     }
     return () => clearInterval(interval);
   }, [isScanning]);
@@ -123,25 +123,25 @@ const App: React.FC = () => {
     <div className="min-h-screen hero-gradient flex flex-col">
       <header className="fixed top-0 w-full z-50 glass-panel border-b border-white/5 h-20 flex items-center justify-between px-6 md:px-12">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => { setView('home'); stopCamera(); }}>
-          <div className="w-10 h-10 bg-cinnabar flex items-center justify-center rotate-45 shadow-lg">
+          <div className="w-10 h-10 bg-cinnabar flex items-center justify-center rotate-45 shadow-lg transition-transform hover:scale-110">
             <span className="text-white font-bold -rotate-45 serif-font">相</span>
           </div>
           <div>
             <h1 className="text-base font-bold text-white serif-font tracking-widest uppercase">相心</h1>
-            <p className="text-[8px] text-bronze tracking-[0.2em] uppercase opacity-60">PhysioLogic AI · 观其面，知其心</p>
+            <p className="text-[8px] text-bronze tracking-[0.2em] uppercase opacity-60">PhysioLogic AI · 火山方舟引擎驱动</p>
           </div>
         </div>
 
         <div className="flex items-center gap-4 md:gap-8">
            <button 
             onClick={() => { setView('home'); stopCamera(); }}
-            className="text-[11px] text-slate-400 font-bold hover:text-white transition-colors tracking-widest hidden sm:block"
+            className="text-[11px] text-slate-400 font-bold hover:text-white transition-colors tracking-widest hidden sm:block uppercase"
            >
              归宗
            </button>
            <button 
             onClick={startCamera}
-            className="px-6 py-2 border border-bronze/40 text-bronze text-[11px] font-bold tracking-widest hover:bg-bronze hover:text-white transition-all rounded-sm"
+            className="px-6 py-2 border border-bronze/40 text-bronze text-[11px] font-bold tracking-widest hover:bg-bronze hover:text-white transition-all rounded-sm uppercase"
            >
              即刻灵鉴
            </button>
@@ -160,7 +160,7 @@ const App: React.FC = () => {
             <section className="min-h-[90vh] flex flex-col items-center justify-center text-center px-6 py-20">
                <div className="space-y-8 max-w-4xl">
                   <div className="inline-block px-4 py-1 border border-bronze/20 bg-bronze/5 rounded-full text-[10px] text-bronze font-bold tracking-[0.3em] mb-4">
-                    Gemini 3 深度引擎 · 融合传统相理与演化心理学
+                    火山方舟大模型驱动 · 融合传统相法与演化心性之结合
                   </div>
                   <h2 className="text-5xl md:text-8xl font-black text-white leading-[1.1] serif-font tracking-tight">
                     观其<span className="text-bronze">面</span>，<br className="md:hidden" />
@@ -197,17 +197,17 @@ const App: React.FC = () => {
               )}
               <ScannerOverlay />
               {isScanning && (
-                <div className="absolute inset-0 bg-ink-950/90 flex flex-col items-center justify-center space-y-8">
+                <div className="absolute inset-0 bg-ink-950/90 flex flex-col items-center justify-center space-y-8 text-center px-8">
                    <div className="relative w-24 h-24">
                       <div className="absolute inset-0 border-2 border-bronze/20 rounded-full"></div>
                       <div className="absolute inset-0 border-2 border-bronze border-t-transparent rounded-full animate-spin"></div>
-                      <div className="absolute inset-0 flex items-center justify-center text-[10px] text-bronze font-bold">鉴定中</div>
+                      <div className="absolute inset-0 flex items-center justify-center text-[10px] text-bronze font-bold">参详中</div>
                    </div>
-                   <div className="text-center">
-                      <p className="text-white text-xl font-bold serif-font tracking-[0.3em] mb-2 animate-pulse">
+                   <div className="space-y-4">
+                      <p className="text-white text-xl font-bold serif-font tracking-[0.3em] animate-pulse">
                         {SCANNING_STEPS[scanningStep]}
                       </p>
-                      <p className="text-[9px] text-slate-500 uppercase tracking-[0.5em]">Arcane Analysis in Progress</p>
+                      <p className="text-[9px] text-slate-500 uppercase tracking-[0.5em]">Arcane Analysis Powered by Ark Engine</p>
                    </div>
                 </div>
               )}
@@ -216,7 +216,7 @@ const App: React.FC = () => {
             <div className="flex gap-4 w-full">
                <button 
                 onClick={() => { setView('home'); stopCamera(); setCapturedImage(null); }}
-                className="flex-1 py-4 text-slate-400 text-xs font-bold tracking-widest border border-white/5 hover:bg-white/5 transition-colors"
+                className="flex-1 py-4 text-slate-400 text-xs font-bold tracking-widest border border-white/5 hover:bg-white/5 transition-colors uppercase"
                >
                  罢手
                </button>
@@ -225,7 +225,7 @@ const App: React.FC = () => {
                   onClick={captureAndAnalyze}
                   className="flex-[2] py-4 bg-bronze text-white font-bold tracking-widest uppercase text-xs hover:bg-bronze-dark transition-colors shadow-lg"
                  >
-                   参详神算
+                   开始灵鉴
                  </button>
                )}
             </div>
@@ -249,10 +249,10 @@ const App: React.FC = () => {
           <div className="text-left space-y-2">
             <div className="text-white font-bold serif-font tracking-widest">相心 (PhysioLogic AI)</div>
             <p className="text-slate-500 text-[10px] leading-relaxed max-w-xs">
-              Gemini 3 引擎驱动，深度融合传统相理与现代心性推演。
+              基于火山方舟大模型的传统文化探索应用。非医疗诊断，仅供娱乐与心性参考。
             </p>
           </div>
-          <p className="text-slate-600 text-[10px]">© 2024 相心 · Gemini API 驱动</p>
+          <p className="text-slate-600 text-[10px]">© 2024 相心 · 火山方舟引擎驱动</p>
         </div>
       </footer>
     </div>

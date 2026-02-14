@@ -1,8 +1,6 @@
 
 import { NextResponse } from 'next/server';
-import { GoogleGenAI, Type } from "@google/genai";
 
-// Fix: Migrated face analysis service from external Ark API to @google/genai as per guidelines.
 export async function POST(req: Request) {
   try {
     const { image } = await req.json();
@@ -11,142 +9,106 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: '法相缺失' }, { status: 400 });
     }
 
-    // Initialize the Gemini API client using the environment variable.
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    // 火山方舟 API 配置
+    const ARK_URL = "https://ark.cn-beijing.volces.com/api/v3/chat/completions";
+    const API_KEY = process.env.ARK_API_KEY;
+    const ENDPOINT_ID = process.env.ARK_ENDPOINT_ID; 
 
-    // Use gemini-3-pro-preview for complex reasoning tasks involving multimodal input and detailed JSON reports.
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
-      contents: [
-        {
-          parts: [
-            { text: "请基于提供的法相（照片）进行深度心性推演。结合传统《公笃相法》等相理与现代演化心理学。请输出详细的专业解析。" },
-            {
-              inlineData: {
-                mimeType: 'image/jpeg',
-                data: image,
-              },
-            },
-          ],
-        },
-      ],
-      config: {
-        systemInstruction: `你是一位融合了传统《公笃相法》、《神相全编》与现代演化心理学的顶级相学宗师。
-你的任务是根据用户的“法相”（照片），进行深度心性推演。
+    if (!API_KEY || !ENDPOINT_ID) {
+      console.error("Missing Ark API Key or Endpoint ID");
+      return NextResponse.json({ error: '系统灵气不足，配置未就绪' }, { status: 500 });
+    }
 
-请遵循以下专业准则：
-1. **察其骨法**：观察额骨（天庭）、鼻骨、颧骨的走势。
-2. **辨其精神**：从眼神的聚散（神藏、神露）判断内在意志。
-3. **明其三停**：上停主早年与天资，中停主中年与毅力，下停主晚年与格局。
+    // 深度提示词：将 AI 塑造为相学大师
+    const systemPrompt = `你是一位融合了中国传统《公笃相法》、《神相全编》与现代演化心理学的顶级相学宗师。
+你的任务是根据用户的“法相”（照片），进行极深度的心性推演。
 
-输出必须极其专业、优雅且富有洞察力。严禁任何额外解释。`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            score: { type: Type.NUMBER },
-            fiveElement: { type: Type.STRING },
-            elementAnalysis: { type: Type.STRING },
-            masterInsight: {
-              type: Type.OBJECT,
-              properties: {
-                poem: { type: Type.STRING },
-                summary: { type: Type.STRING },
-              },
-              required: ["poem", "summary"],
-            },
-            observations: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  feature: { type: Type.STRING },
-                  description: { type: Type.STRING },
-                  significance: { type: Type.STRING },
-                },
-                required: ["feature", "description", "significance"],
-              },
-            },
-            palaces: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  name: { type: Type.STRING },
-                  status: { type: Type.STRING },
-                  analysis: { type: Type.STRING },
-                },
-                required: ["name", "status", "analysis"],
-              },
-            },
-            riskMetrics: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  label: { type: Type.STRING },
-                  value: { type: Type.STRING },
-                  traditionalTerm: { type: Type.STRING },
-                  description: { type: Type.STRING },
-                },
-                required: ["label", "value", "traditionalTerm", "description"],
-              },
-            },
-            karma: {
-              type: Type.OBJECT,
-              properties: {
-                past: { type: Type.STRING },
-                present: { type: Type.STRING },
-                future: { type: Type.STRING },
-              },
-              required: ["past", "present", "future"],
-            },
-            workplace: {
-              type: Type.OBJECT,
-              properties: {
-                role: { type: Type.STRING },
-                strengths: { type: Type.ARRAY, items: { type: Type.STRING } },
-                advice: { type: Type.STRING },
-                compatibility: { type: Type.STRING },
-              },
-              required: ["role", "strengths", "advice", "compatibility"],
-            },
-            personalityProfile: { type: Type.STRING },
-            socialGuide: { type: Type.STRING },
-            hobbies: { type: Type.ARRAY, items: { type: Type.STRING } },
-            auraStatus: { type: Type.STRING },
-            auraMessage: { type: Type.STRING },
-            moles: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  position: { type: Type.STRING },
-                  nature: { type: Type.STRING },
-                  meaning: { type: Type.STRING },
-                },
-                required: ["position", "nature", "meaning"],
-              },
-            },
-          },
-          required: [
-            "score", "fiveElement", "elementAnalysis", "masterInsight", "observations",
-            "palaces", "riskMetrics", "karma", "workplace", "personalityProfile",
-            "socialGuide", "hobbies", "auraStatus", "auraMessage", "moles"
-          ],
-        },
+请严格遵循以下专业观察逻辑：
+1. **察其骨法**：重点观察天庭（额头）、山根（鼻根）、颧骨的饱满度。
+2. **辨其精神**：通过眼神的聚散、藏露判断其意志力。
+3. **明其三停**：上停主早年与智慧，中停主中年与执行力，下停主晚年与财富格局。
+
+输出要求：文字必须古雅且精准，带有一代宗师的威严感。
+请严格按照以下 JSON 格式返回，严禁任何额外解释：
+
+{
+  "score": 数字(0-100),
+  "fiveElement": "木/火/土/金/水",
+  "elementAnalysis": "结合五行格局与骨法特征的深度解析，字数100字左右",
+  "masterInsight": {
+    "poem": "七言绝句判词，展现宗师气象",
+    "summary": "一句话点破天机"
+  },
+  "observations": [
+    {
+      "feature": "如：山根平满",
+      "description": "对此特征具体的视觉化描述，让用户觉得你真的在看他",
+      "significance": "该特征在相学中的具体含义"
+    }
+  ],
+  "palaces": [
+    {"name": "命宫", "status": "优/良/中", "analysis": "详细解析"},
+    {"name": "财帛宫", "status": "优/良/中", "analysis": "详细解析"},
+    {"name": "官禄宫", "status": "优/良/中", "analysis": "详细解析"}
+  ],
+  "riskMetrics": [
+    {"label": "心性定力", "value": "85%", "traditionalTerm": "神藏", "description": "具体解析"}
+  ],
+  "karma": {"past": "宿命渊源", "present": "现世定位", "future": "因果愿景"},
+  "workplace": {
+    "role": "职场定位",
+    "strengths": ["优势1", "优势2"],
+    "advice": "具体的进阶规劝",
+    "compatibility": "契合的人格描述"
+  },
+  "personalityProfile": "极其精准的性格总结",
+  "socialGuide": "与此人交往的锦囊妙计",
+  "hobbies": ["陶冶情操的具体建议"],
+  "auraStatus": "气色断语",
+  "auraMessage": "今日灵感箴言",
+  "moles": [{"position": "位置", "nature": "吉/凶/平", "meaning": "含义"}]
+}`;
+
+    const arkResponse = await fetch(ARK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`
       },
+      body: JSON.stringify({
+        model: ENDPOINT_ID,
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: systemPrompt },
+              { type: "image_url", image_url: { url: `data:image/jpeg;base64,${image}` } }
+            ]
+          }
+        ],
+        // 要求模型返回 JSON 对象
+        response_format: { type: "json_object" },
+        temperature: 0.7
+      })
     });
 
-    const text = response.text;
-    if (!text) {
-      throw new Error('宗师灵鉴中断');
+    if (!arkResponse.ok) {
+      const errorText = await arkResponse.text();
+      console.error("Ark API Error:", errorText);
+      return NextResponse.json({ error: '宗师正在闭关，请稍后再试' }, { status: 502 });
     }
+
+    const data = await arkResponse.json();
+    const content = data.choices?.[0]?.message?.content;
     
-    return NextResponse.json(JSON.parse(text));
+    if (!content) {
+      throw new Error("模型未吐露天机");
+    }
+
+    return NextResponse.json(JSON.parse(content));
 
   } catch (error: any) {
-    console.error("Gemini API Error:", error);
+    console.error("API Route Exception:", error);
     return NextResponse.json({ error: '玄机难测，系统处理失败' }, { status: 500 });
   }
 }
