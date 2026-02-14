@@ -25,7 +25,6 @@ const App: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // 模拟动态步进文案，增强沉浸感
   useEffect(() => {
     let interval: any;
     if (isScanning) {
@@ -50,7 +49,7 @@ const App: React.FC = () => {
         await videoRef.current.play();
       }
     } catch (err: any) {
-      setError('镜鉴开启受阻。请确保授权摄像头访问，并在安全协议(HTTPS)环境下运行。');
+      setError('镜鉴开启受阻。请确保授权摄像头访问，并确保在安全环境下运行。');
       setView('home');
     }
   };
@@ -86,7 +85,7 @@ const App: React.FC = () => {
       setView('report');
       stopCamera();
     } catch (err: any) {
-      setError(`参详受阻: ${err.message}`);
+      setError(`灵鉴受阻: ${err.message}`);
       video.play().catch(() => {});
     } finally {
       setIsScanning(false);
@@ -128,20 +127,20 @@ const App: React.FC = () => {
           </div>
           <div>
             <h1 className="text-base font-bold text-white serif-font tracking-widest uppercase">相心</h1>
-            <p className="text-[8px] text-bronze tracking-[0.2em] uppercase opacity-60">PhysioLogic AI · 火山方舟引擎驱动</p>
+            <p className="text-[9px] text-bronze tracking-[0.2em] opacity-60">灵鉴解析 · 火山方舟引擎</p>
           </div>
         </div>
 
         <div className="flex items-center gap-4 md:gap-8">
            <button 
             onClick={() => { setView('home'); stopCamera(); }}
-            className="text-[11px] text-slate-400 font-bold hover:text-white transition-colors tracking-widest hidden sm:block uppercase"
+            className="text-[11px] text-slate-400 font-bold hover:text-white transition-colors tracking-widest hidden sm:block"
            >
-             归宗
+             归宗主页
            </button>
            <button 
             onClick={startCamera}
-            className="px-6 py-2 border border-bronze/40 text-bronze text-[11px] font-bold tracking-widest hover:bg-bronze hover:text-white transition-all rounded-sm uppercase"
+            className="px-6 py-2 border border-bronze/40 text-bronze text-[11px] font-bold tracking-widest hover:bg-bronze hover:text-white transition-all rounded-sm"
            >
              即刻灵鉴
            </button>
@@ -150,35 +149,63 @@ const App: React.FC = () => {
 
       <main className="flex-1 pt-20">
         {error && (
-          <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[60] w-[90%] max-w-md p-4 bg-cinnabar/10 border border-cinnabar/20 text-cinnabar text-[10px] text-center serif-font animate-pulse rounded-md">
+          <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[60] w-[90%] max-w-md p-4 bg-cinnabar/10 border border-cinnabar/20 text-cinnabar text-[11px] text-center serif-font animate-pulse rounded-md shadow-2xl">
             {error}
           </div>
         )}
 
         {view === 'home' && (
           <div className="animate-in fade-in duration-1000">
-            <section className="min-h-[90vh] flex flex-col items-center justify-center text-center px-6 py-20">
-               <div className="space-y-8 max-w-4xl">
-                  <div className="inline-block px-4 py-1 border border-bronze/20 bg-bronze/5 rounded-full text-[10px] text-bronze font-bold tracking-[0.3em] mb-4">
-                    火山方舟大模型驱动 · 融合传统相法与演化心性之结合
+            <section className="min-h-[90vh] flex flex-col items-center justify-center text-center px-6 py-12 md:py-20">
+               <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
+                  
+                  {/* 顶部标签 */}
+                  <div className="inline-block px-4 py-1 border border-bronze/20 bg-bronze/5 rounded-full text-[11px] text-bronze font-bold tracking-[0.3em] mb-12 animate-in slide-in-from-top-4 duration-1000">
+                    火山方舟深度灵鉴 · 参详面相玄机
                   </div>
-                  <h2 className="text-5xl md:text-8xl font-black text-white leading-[1.1] serif-font tracking-tight">
-                    观其<span className="text-bronze">面</span>，<br className="md:hidden" />
-                    知其<span className="text-cinnabar">心</span>。
-                  </h2>
-                  <p className="text-lg md:text-2xl text-slate-400 font-light max-w-2xl mx-auto leading-relaxed serif-font px-4">
-                    观其面，知其心；探寻面部纹路下的性格。
+
+                  {/* 核心标语：竖排错位排版 */}
+                  <div className="relative mb-20 group">
+                    {/* 背景装饰：中式圆相 Enso */}
+                    <div className="absolute inset-0 -m-20 opacity-20 pointer-events-none group-hover:opacity-30 transition-opacity duration-1000">
+                      <svg viewBox="0 0 100 100" className="w-full h-full stroke-bronze fill-none scale-150 md:scale-125" strokeWidth="0.2">
+                        <circle cx="50" cy="50" r="45" strokeDasharray="1 4" className="animate-[spin_60s_linear_infinite]" />
+                        <circle cx="50" cy="50" r="40" strokeDasharray="10 5" className="animate-[spin_40s_linear_infinite_reverse]" />
+                      </svg>
+                    </div>
+
+                    <div className="flex items-start justify-center gap-8 md:gap-16">
+                      {/* 右侧：观其面 */}
+                      <div className="vertical-text text-7xl md:text-9xl font-black text-white serif-font tracking-[0.2em] leading-none animate-in slide-in-from-right-8 duration-700">
+                        观其<span className="text-bronze">面</span>
+                      </div>
+                      
+                      {/* 左侧：知其心（向下偏移） */}
+                      <div className="vertical-text text-7xl md:text-9xl font-black text-white serif-font tracking-[0.2em] leading-none pt-24 md:pt-32 animate-in slide-in-from-left-8 duration-700 delay-300">
+                        知其<span className="text-cinnabar">心</span>
+                      </div>
+                    </div>
+
+                    {/* 装饰性小印章 */}
+                    <div className="absolute -right-8 bottom-0 md:-right-16 md:bottom-12 w-8 h-8 md:w-12 md:h-12 bg-cinnabar flex items-center justify-center shadow-lg animate-in zoom-in duration-1000 delay-1000">
+                      <span className="text-white text-[10px] md:text-xs font-bold serif-font leading-tight">灵鉴<br/>真传</span>
+                    </div>
+                  </div>
+
+                  <p className="text-lg md:text-2xl text-slate-400 font-light max-w-xl mx-auto leading-relaxed serif-font px-4 mb-16 animate-in fade-in duration-1000 delay-500">
+                    探寻面部纹路下的性格，<br className="md:hidden" />预见潜在的前程格局。
                   </p>
                   
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-10">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-700">
                     <button 
                       onClick={startCamera}
-                      className="w-full sm:w-auto px-16 py-5 bg-cinnabar text-white text-lg font-bold rounded-sm shadow-2xl hover:scale-105 transition-transform serif-font tracking-[0.2em]"
+                      className="group relative w-full sm:w-auto px-16 py-6 bg-cinnabar text-white text-xl font-bold rounded-sm overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_20px_60px_rgba(150,40,40,0.3)] serif-font tracking-[0.4em]"
                     >
-                      开启镜鉴
+                      <span className="relative z-10">开启镜鉴</span>
+                      <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                     </button>
-                    <label className="w-full sm:w-auto px-16 py-5 bg-white/5 border border-white/10 text-slate-300 text-lg font-bold rounded-sm hover:bg-white/10 transition-colors cursor-pointer serif-font tracking-[0.2em]">
-                      传其法相
+                    <label className="w-full sm:w-auto px-16 py-6 bg-white/5 border border-white/10 text-slate-300 text-xl font-bold rounded-sm hover:bg-white/10 hover:text-white transition-all cursor-pointer serif-font tracking-[0.4em]">
+                      上传法相
                       <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
                     </label>
                   </div>
@@ -189,7 +216,7 @@ const App: React.FC = () => {
 
         {view === 'scanner' && (
           <div className="max-w-xl mx-auto flex flex-col items-center justify-center p-6 space-y-12 animate-in slide-in-from-bottom-10">
-            <div className="relative w-full aspect-[3/4] rounded-sm overflow-hidden bg-black shadow-2xl border border-bronze/20">
+            <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-black shadow-2xl border border-bronze/20">
               {capturedImage ? (
                 <img src={capturedImage} className="w-full h-full object-cover grayscale-[0.3]" alt="法相" />
               ) : (
@@ -197,17 +224,17 @@ const App: React.FC = () => {
               )}
               <ScannerOverlay />
               {isScanning && (
-                <div className="absolute inset-0 bg-ink-950/90 flex flex-col items-center justify-center space-y-8 text-center px-8">
+                <div className="absolute inset-0 bg-ink-950/95 flex flex-col items-center justify-center space-y-8 text-center px-8">
                    <div className="relative w-24 h-24">
-                      <div className="absolute inset-0 border-2 border-bronze/20 rounded-full"></div>
+                      <div className="absolute inset-0 border-2 border-bronze/10 rounded-full"></div>
                       <div className="absolute inset-0 border-2 border-bronze border-t-transparent rounded-full animate-spin"></div>
                       <div className="absolute inset-0 flex items-center justify-center text-[10px] text-bronze font-bold">参详中</div>
                    </div>
                    <div className="space-y-4">
-                      <p className="text-white text-xl font-bold serif-font tracking-[0.3em] animate-pulse">
+                      <p className="text-white text-2xl font-bold serif-font tracking-[0.4em] animate-pulse">
                         {SCANNING_STEPS[scanningStep]}
                       </p>
-                      <p className="text-[9px] text-slate-500 uppercase tracking-[0.5em]">Arcane Analysis Powered by Ark Engine</p>
+                      <p className="text-[10px] text-slate-500 tracking-[0.5em] uppercase">火山方舟 · 深度灵鉴解析引擎</p>
                    </div>
                 </div>
               )}
@@ -216,16 +243,16 @@ const App: React.FC = () => {
             <div className="flex gap-4 w-full">
                <button 
                 onClick={() => { setView('home'); stopCamera(); setCapturedImage(null); }}
-                className="flex-1 py-4 text-slate-400 text-xs font-bold tracking-widest border border-white/5 hover:bg-white/5 transition-colors uppercase"
+                className="flex-1 py-4 text-slate-500 text-[11px] font-bold tracking-[0.4em] border border-white/5 hover:bg-white/5 transition-colors"
                >
-                 罢手
+                 放弃本次灵鉴
                </button>
                {!capturedImage && (
                  <button 
                   onClick={captureAndAnalyze}
-                  className="flex-[2] py-4 bg-bronze text-white font-bold tracking-widest uppercase text-xs hover:bg-bronze-dark transition-colors shadow-lg"
+                  className="flex-[2] py-4 bg-bronze text-white font-bold tracking-[0.6em] text-[11px] hover:bg-bronze-dark transition-colors shadow-2xl"
                  >
-                   开始灵鉴
+                   开始参详
                  </button>
                )}
             </div>
@@ -244,15 +271,22 @@ const App: React.FC = () => {
         )}
       </main>
 
-      <footer className="py-20 border-t border-white/5 bg-ink-950/20 text-center px-6">
+      <footer className="py-20 border-t border-white/5 bg-ink-950/40 text-center px-6 mt-20">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
-          <div className="text-left space-y-2">
-            <div className="text-white font-bold serif-font tracking-widest">相心 (PhysioLogic AI)</div>
-            <p className="text-slate-500 text-[10px] leading-relaxed max-w-xs">
-              基于火山方舟大模型的传统文化探索应用。非医疗诊断，仅供娱乐与心性参考。
+          <div className="text-left space-y-3">
+            <div className="text-white font-bold serif-font tracking-widest text-lg">相心</div>
+            <p className="text-slate-500 text-[11px] leading-relaxed max-w-sm">
+              融合传统文化与尖端大模型。报告仅供学习参考，非医疗或命运之断言。
             </p>
           </div>
-          <p className="text-slate-600 text-[10px]">© 2024 相心 · 火山方舟引擎驱动</p>
+          <div className="flex flex-col items-end gap-2">
+            <p className="text-slate-600 text-[10px] tracking-widest uppercase">© 2024 相心灵鉴 · 火山方舟引擎</p>
+            <div className="flex gap-4 opacity-30">
+               <div className="w-4 h-4 bg-bronze rounded-full"></div>
+               <div className="w-4 h-4 bg-cinnabar rounded-full"></div>
+               <div className="w-4 h-4 bg-ink-950 rounded-full"></div>
+            </div>
+          </div>
         </div>
       </footer>
     </div>

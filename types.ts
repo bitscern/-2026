@@ -7,11 +7,14 @@ export enum FiveElement {
   WATER = "水"
 }
 
+export type FaceRegion = 'FOREHEAD' | 'EYES' | 'NOSE' | 'MOUTH' | 'CHIN' | 'CHEEK_L' | 'CHEEK_R' | 'FULL';
+
 export interface Observation {
   feature: string;
-  evidence: string; // 视觉证据：如“眼角微垂，有明显细密纹路”
+  evidence: string;
   significance: string;
-  confidence: number; // 置信度 0-1
+  confidence: number;
+  region: FaceRegion; // 新增：对应的面部区域，用于前端高亮
 }
 
 export interface PalaceData {
@@ -40,11 +43,10 @@ export interface AnalysisResult {
     strengths: string[];
     advice: string;
   };
-  // 新增：深度隐藏层数据，增强用户感知深度
   advancedLog: {
-    boneStructure: string; // 骨相深度解析
-    spiritAnalysis: string; // 精气神分析
-    potentialRisks: string; // 潜在需注意点
+    boneStructure: string;
+    spiritAnalysis: string;
+    potentialRisks: string;
   };
 }
 
