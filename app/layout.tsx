@@ -1,11 +1,10 @@
-// Added React import to satisfy TypeScript namespace requirements for ReactNode.
 import React from 'react';
 import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '相心 - 观其面，知其心',
-  description: '融合传统相学与 AI 的面部分析应用',
+  title: '相心 (PhysioLogic AI) - 观其面，知其心',
+  description: '一款融合中国传统面相学与现代心理学风险评估的高端人工智能面部分析应用。',
 };
 
 export default function RootLayout({
@@ -18,7 +17,7 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" />
       </head>
-      <body>{children}</body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
