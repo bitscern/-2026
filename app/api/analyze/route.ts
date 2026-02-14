@@ -2,25 +2,18 @@
 import { NextResponse } from 'next/server';
 
 const POSITIVE_TERMS = ["天庭饱满", "地阁方圆", "山根隆起", "双目有神", "印堂发亮", "三停均称", "五岳朝拱", "准头圆润", "辅角宽厚", "神采奕奕", "华盖云集", "气若长虹"];
-const FORBIDDEN_TERMS = ["可能", "大概", "或许", "Maybe", "Potential", "如果你愿意", "视情况而定"];
 
 export async function POST(req: Request) {
   try {
     const { image } = await req.json();
-    if (!image) return NextResponse.json({ error: '法相缺失，无法参详' }, { status: 400 });
+    if (!image) return NextResponse.json({ error: '法相缺失' }, { status: 400 });
 
     const ARK_URL = "https://ark.cn-beijing.volces.com/api/v3/chat/completions";
-    const API_KEY = process.env.ARK_API_KEY;
-    const ENDPOINT_ID = process.env.ARK_ENDPOINT_ID;
+    const { ARK_API_KEY: API_KEY, ARK_ENDPOINT_ID: ENDPOINT_ID } = process.env;
 
-    if (!API_KEY || !ENDPOINT_ID) {
-      return NextResponse.json({ error: '灵鉴配置未就绪' }, { status: 500 });
-    }
+    if (!API_KEY || !ENDPOINT_ID) return NextResponse.json({ error: '配置缺失' }, { status: 500 });
 
-    // --- 第一阶段：视觉解构 ---
-    const stage1Prompt = `你是一位极致精准的视觉观察员。观察照片，提取 8-10 个核心视觉特征，包括面部纹路、眼神动态、手势摆放、饰品环境。
-重点：详细描述特征的几何形状、颜色深度。归类到：FOREHEAD, EYES, NOSE, MOUTH, CHIN, CHEEK_L, CHEEK_R, FULL。只输出 JSON。`;
-
+    // --- Stage 1: 视觉特征提取 (极简) ---
     const stage1Response = await fetch(ARK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${API_KEY}` },
@@ -29,7 +22,7 @@ export async function POST(req: Request) {
         messages: [{
           role: "user",
           content: [
-            { type: "text", text: stage1Prompt },
+            { type: "text", text: "提取图中8个核心面部特征(形态/气色/眼神/手势)，归类至：FOREHEAD, EYES, NOSE, MOUTH, CHIN, CHEEK_L, CHEEK_R, FULL。只输出JSON数组对象。" },
             { type: "image_url", image_url: { url: `data:image/jpeg;base64,${image}` } }
           ]
         }],
@@ -37,49 +30,32 @@ export async function POST(req: Request) {
       })
     });
 
-    if (!stage1Response.ok) throw new Error('视觉解析受阻');
     const stage1Data = await stage1Response.json();
-    const observationFacts = JSON.parse(stage1Data.choices[0].message.content);
+    const observationFacts = stage1Data.choices[0].message.content;
 
-    // --- 第二阶段：宗师深度推演 ---
-    const stage2Prompt = `基于视觉事实：${JSON.stringify(observationFacts)}。
-你现在是相学与演化心理学宗师。请输出一份信息量极大且具备中式美学的灵鉴报告。
+    // --- Stage 2: 深度灵鉴 (极简+严约束) ---
+    // 移除了 observations 输出，大幅节省输出 Token
+    const stage2Prompt = `事实：${observationFacts}。
+你是相学宗师。请输出深度灵鉴报告。
+约束：
+1. masterInsight.poem/summary严禁英文、数字、V字等现代字符，需将现代手势化为古风意向。
+2. 必用术语：${POSITIVE_TERMS.join('、')}。
+3. 纯JSON输出，无须包含原始观测。
 
-【关键禁令】：
-1. 绝对禁止在 masterInsight.poem（判词）和 summary 中使用任何英文、拉丁字母（如 V, OK 等）、阿拉伯数字或现代符号。
-2. 若观察到现代手势（如剪刀手V字），请将其转化为中式相学意向（如：指尖呈双峰、手起灵动之势、瑞指含春等）。
-3. 严禁废话，使用术语：${POSITIVE_TERMS.join('、')}。
-
-输出 JSON 结构：
+JSON格式：
 {
-  "score": 评分(60-99),
-  "fiveElement": "金/木/水/火/土",
-  "elementAnalysis": "五行性格深度推演，结合骨相与气色",
-  "masterInsight": { "poem": "七言判词，严禁出现字母数字", "summary": "核心批语，简练有力" },
-  "observations": [包含 region 的特征列表],
-  "palaces": [
-    {"name": "命宫", "status": "优/平/变", "analysis": "详细解析"},
-    {"name": "官禄宫", "status": "...", "analysis": "..."},
-    {"name": "迁移宫", "status": "...", "analysis": "..."},
-    {"name": "财帛宫", "status": "...", "analysis": "..."},
-    {"name": "福德宫", "status": "...", "analysis": "..."},
-    {"name": "兄弟宫", "status": "...", "analysis": "..."}
-  ],
-  "personalityProfile": "心性根基深度描述（至少150字，涵盖潜在性格与外显气质）",
-  "socialGuide": "人际交往的具体避坑指南与进阶建议",
-  "hobbies": ["推荐的修心方式1", "2", "3"],
-  "auraStatus": "当前气韵（如：青龙得位、朱雀衔财等）",
-  "auraMessage": "今日灵鉴箴言",
-  "workplace": {
-    "role": "最契合的职业角色定位",
-    "strengths": ["核心优势1", "优势2", "优势3"],
-    "advice": "职场进阶的具体行动建议"
-  },
-  "advancedLog": { 
-    "boneStructure": "骨相解构细节", 
-    "spiritAnalysis": "精气神活跃度分析", 
-    "potentialRisks": "性格弱点警示" 
-  }
+  "score": 评分,
+  "fiveElement": "五行",
+  "elementAnalysis": "性格推演",
+  "masterInsight": { "poem": "七言判词", "summary": "核心批语" },
+  "palaces": [{"name": "命宫/官禄宫/迁移宫/财帛宫/福德宫/兄弟宫", "status": "优/平/变", "analysis": "解析"}],
+  "personalityProfile": "心性深度描述(200字以上)",
+  "socialGuide": "人际建议",
+  "hobbies": ["方案1", "2", "3"],
+  "auraStatus": "气韵描述",
+  "auraMessage": "今日箴言",
+  "workplace": { "role": "定位", "strengths": ["优势1", "2", "3"], "advice": "进阶建议" },
+  "advancedLog": { "boneStructure": "骨相", "spiritAnalysis": "精气神", "potentialRisks": "警示" }
 }`;
 
     const stage2Response = await fetch(ARK_URL, {
