@@ -46,21 +46,21 @@ const AnalysisReport: React.FC<AnalysisReportProps> = ({ data, image, onReset })
   return (
     <div className="max-w-5xl mx-auto space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-32 relative px-4">
       
-      {/* 1. 宗师判词 - 强化气场 */}
-      <div className="relative overflow-hidden rounded-[3rem] bg-ink-900 border border-bronze/30 p-12 shadow-2xl group text-center">
+      {/* 1. 宗师判词 - 优化自适应字号 */}
+      <div className="relative overflow-hidden rounded-[3rem] bg-ink-900 border border-bronze/30 p-8 md:p-16 shadow-2xl group text-center">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-bronze/50 to-transparent"></div>
         <div className="flex flex-col items-center space-y-8">
            <div className="px-6 py-1.5 bg-cinnabar/10 border border-cinnabar/20 rounded-full text-[10px] text-cinnabar font-bold tracking-[0.5em] uppercase">
              火山方舟 · 核心灵鉴判词
            </div>
            
-           <h2 className="text-4xl md:text-6xl font-bold text-white serif-font leading-tight tracking-[0.15em]">
+           <h2 className={`font-bold text-white serif-font leading-tight tracking-[0.15em] max-w-4xl mx-auto ${data.masterInsight.poem.length > 20 ? 'text-3xl md:text-5xl' : 'text-4xl md:text-6xl'}`}>
              {data.masterInsight.poem}
            </h2>
            
            <div className="w-24 h-[1px] bg-bronze/30"></div>
            
-           <p className="text-bronze text-xl md:text-2xl italic serif-font opacity-90">
+           <p className="text-bronze text-lg md:text-2xl italic serif-font opacity-90 max-w-2xl">
              「{data.masterInsight.summary}」
            </p>
 
@@ -112,13 +112,13 @@ const AnalysisReport: React.FC<AnalysisReportProps> = ({ data, image, onReset })
         {/* 右侧：十二宫位与实录 */}
         <div className="lg:col-span-7 space-y-12">
           
-          {/* 十二宫位阵列 - 新增 */}
+          {/* 十二宫位阵列 */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {data.palaces?.map((palace, idx) => (
-              <div key={idx} className="bg-white/[0.02] border border-white/5 p-5 rounded-2xl hover:border-bronze/30 transition-all group">
+              <div key={idx} className="bg-white/[0.02] border border-white/5 p-5 rounded-2xl hover:border-bronze/30 transition-all group hover:bg-white/[0.04]">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-bronze text-[10px] font-bold tracking-widest">{palace.name}</span>
-                  <span className={`text-[9px] px-1.5 py-0.5 rounded border ${palace.status === '优' ? 'border-cinnabar/40 text-cinnabar' : 'border-slate-700 text-slate-500'}`}>
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded border transition-colors ${palace.status === '优' ? 'border-cinnabar/40 text-cinnabar bg-cinnabar/5' : 'border-slate-700 text-slate-500'}`}>
                     {palace.status}
                   </span>
                 </div>
@@ -141,7 +141,7 @@ const AnalysisReport: React.FC<AnalysisReportProps> = ({ data, image, onReset })
                     onMouseLeave={() => setActiveRegion(null)}
                   >
                     <div className="flex justify-between items-end">
-                      <span className="text-white font-bold serif-font text-lg">{obs.feature}</span>
+                      <span className="text-white font-bold serif-font text-lg group-hover:text-bronze transition-colors">{obs.feature}</span>
                       <span className="text-[9px] text-slate-600 tracking-widest">{REGION_CN[obs.region]}</span>
                     </div>
                     <p className="text-[12px] text-slate-400 leading-relaxed pl-4 border-l-2 border-bronze/20 group-hover:border-bronze transition-colors">
@@ -154,16 +154,16 @@ const AnalysisReport: React.FC<AnalysisReportProps> = ({ data, image, onReset })
         </div>
       </div>
 
-      {/* 3. 深度推演卡片区 - 大幅扩充信息 */}
+      {/* 3. 深度推演卡片区 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* 心性与交际 */}
-        <div className="md:col-span-2 bg-ink-900 border border-white/5 rounded-[2.5rem] p-10 space-y-6">
+        <div className="md:col-span-2 bg-ink-900 border border-white/5 rounded-[2.5rem] p-10 space-y-6 shadow-inner">
            <h4 className="text-bronze text-[11px] font-black tracking-[0.4em] mb-4">心性根基与交际锦囊</h4>
            <p className="text-slate-300 text-lg serif-font leading-relaxed tracking-wide">
              {data.personalityProfile}
            </p>
            <div className="pt-6 border-t border-white/5">
-             <p className="text-[11px] text-cinnabar font-bold tracking-widest mb-3">【交际锦囊】</p>
+             <p className="text-[11px] text-cinnabar font-bold tracking-widest mb-3 uppercase">【交际锦囊 · 避坑指南】</p>
              <p className="text-sm text-slate-400 leading-relaxed italic">{data.socialGuide}</p>
            </div>
         </div>
@@ -171,7 +171,7 @@ const AnalysisReport: React.FC<AnalysisReportProps> = ({ data, image, onReset })
         {/* 职场建议 */}
         <div className="bg-bronze/[0.03] border border-bronze/10 rounded-[2.5rem] p-10 space-y-6">
            <h4 className="text-bronze text-[11px] font-black tracking-[0.4em]">职场前程</h4>
-           <div className="space-y-4">
+           <div className="space-y-6">
               <div>
                 <p className="text-[9px] text-slate-500 uppercase tracking-widest mb-1">推荐角色</p>
                 <p className="text-xl text-white font-bold serif-font">{data.workplace.role}</p>
@@ -180,24 +180,43 @@ const AnalysisReport: React.FC<AnalysisReportProps> = ({ data, image, onReset })
                 <p className="text-[9px] text-slate-500 uppercase tracking-widest mb-2">核心优势</p>
                 <div className="flex flex-wrap gap-2">
                   {data.workplace.strengths.map((s, i) => (
-                    <span key={i} className="px-2 py-1 bg-white/5 text-bronze text-[10px] rounded-md">{s}</span>
+                    <span key={i} className="px-2 py-1 bg-white/5 text-bronze text-[10px] rounded-md border border-bronze/10">{s}</span>
                   ))}
                 </div>
               </div>
-              <p className="text-sm text-slate-400 leading-relaxed pt-4 border-t border-white/10">
-                {data.workplace.advice}
-              </p>
+              <div className="pt-4 border-t border-white/10">
+                <p className="text-[9px] text-slate-500 uppercase tracking-widest mb-2">进阶建议</p>
+                <p className="text-sm text-slate-400 leading-relaxed italic">
+                  {data.workplace.advice}
+                </p>
+              </div>
            </div>
         </div>
       </div>
 
-      {/* 4. 底层灵鉴日志 */}
+      {/* 4. 修心推荐 */}
+      <div className="glass-panel rounded-[2rem] p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="space-y-2">
+           <h4 className="text-bronze text-[11px] font-black tracking-[0.4em]">修心推荐</h4>
+           <p className="text-slate-500 text-xs">基于五行格局的调息方案</p>
+        </div>
+        <div className="flex flex-wrap gap-4">
+          {data.hobbies?.map((hobby, i) => (
+            <div key={i} className="px-6 py-2 border border-white/10 rounded-full text-slate-300 text-sm serif-font hover:bg-white/5 transition-colors">
+              {hobby}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 5. 底层灵鉴日志 */}
       <div className="space-y-8">
          <button 
            onClick={() => setShowAdvanced(!showAdvanced)}
-           className="w-full py-6 border border-white/5 rounded-2xl text-[10px] text-slate-600 hover:text-bronze transition-all tracking-[0.8em]"
+           className="w-full py-6 border border-white/5 rounded-2xl text-[10px] text-slate-600 hover:text-bronze transition-all tracking-[0.8em] group"
          >
            {showAdvanced ? '封存宗师日志' : '展开宗师级底层灵鉴日志'}
+           <span className="block text-[8px] opacity-0 group-hover:opacity-100 transition-opacity mt-1 tracking-widest">DEEP LOG GENERATED BY ARK ENGINE</span>
          </button>
          
          {showAdvanced && (
@@ -205,9 +224,9 @@ const AnalysisReport: React.FC<AnalysisReportProps> = ({ data, image, onReset })
               {[
                 { title: '骨相解构', content: data.advancedLog.boneStructure },
                 { title: '精气神监控', content: data.advancedLog.spiritAnalysis },
-                { title: '风险预警', content: data.advancedLog.potentialRisks }
+                { title: '性格红线', content: data.advancedLog.potentialRisks }
               ].map((item, i) => (
-                <div key={i} className="bg-black/40 p-8 rounded-3xl border border-white/5">
+                <div key={i} className="bg-black/40 p-8 rounded-3xl border border-white/5 hover:border-bronze/20 transition-colors">
                   <h5 className="text-[10px] text-bronze font-black mb-4 tracking-widest">{item.title}</h5>
                   <p className="text-[12px] text-slate-500 leading-relaxed">{item.content}</p>
                 </div>
@@ -216,7 +235,7 @@ const AnalysisReport: React.FC<AnalysisReportProps> = ({ data, image, onReset })
          )}
       </div>
 
-      {/* 5. 底部固定按钮 */}
+      {/* 6. 底部固定按钮 */}
       <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-6">
          <button onClick={onReset} className="px-10 py-4 glass-panel rounded-full text-[11px] text-slate-400 font-bold tracking-[0.4em] hover:text-white transition-all shadow-2xl">
            重置
@@ -226,41 +245,39 @@ const AnalysisReport: React.FC<AnalysisReportProps> = ({ data, image, onReset })
          </button>
       </div>
 
-      {/* 6. 分享海报 (简易实现) */}
+      {/* 7. 分享海报 */}
       {showPoster && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
            <div className="absolute inset-0 bg-black/98 backdrop-blur-xl" onClick={() => setShowPoster(false)}></div>
-           <div className="relative w-full max-w-sm bg-ink-950 border border-bronze/30 p-12 rounded-[3rem] space-y-10 text-center shadow-[0_0_100px_rgba(197,160,89,0.15)] animate-in zoom-in-95 duration-500">
-              <div className="text-bronze text-[10px] font-bold tracking-[0.5em]">相心 · 灵鉴卡</div>
-              <div className="aspect-[4/5] rounded-3xl overflow-hidden border border-bronze/10">
+           <div className="relative w-full max-w-sm bg-ink-950 border border-bronze/30 p-10 rounded-[3rem] space-y-8 text-center shadow-[0_0_100px_rgba(197,160,89,0.15)] animate-in zoom-in-95 duration-500">
+              <div className="text-bronze text-[10px] font-bold tracking-[0.5em]">相心 · 灵鉴分享</div>
+              <div className="aspect-[4/5] rounded-3xl overflow-hidden border border-bronze/10 relative">
                 <img src={image} className="w-full h-full object-cover grayscale-[0.2]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-transparent to-transparent"></div>
+                <div className="absolute bottom-4 left-4 right-4 text-left">
+                   <div className="text-[8px] text-bronze tracking-widest uppercase mb-1">灵鉴格局</div>
+                   <div className="text-white text-xl font-bold serif-font">{data.fiveElement}形格 · {data.score}分</div>
+                </div>
               </div>
               <div className="space-y-4">
-                 <h2 className="text-2xl font-bold text-white serif-font tracking-widest">{data.masterInsight.poem}</h2>
+                 <h2 className="text-xl font-bold text-white serif-font tracking-widest leading-relaxed">
+                   {data.masterInsight.poem}
+                 </h2>
                  <p className="text-bronze text-sm italic serif-font">「{data.masterInsight.summary}」</p>
               </div>
-              <div className="flex justify-between items-center pt-8 border-t border-white/5">
+              <div className="flex justify-between items-center pt-6 border-t border-white/5">
                 <div className="text-left">
-                  <p className="text-white text-xs font-bold">扫码灵鉴</p>
-                  <p className="text-[8px] text-slate-500 uppercase tracking-widest">PhysioLogic AI</p>
+                  <p className="text-white text-[10px] font-bold">扫码观面知心</p>
+                  <p className="text-[7px] text-slate-500 uppercase tracking-widest">PhysioLogic AI Master</p>
                 </div>
-                <div className="w-12 h-12 bg-bronze/20 rounded-lg border border-bronze/30 flex items-center justify-center text-[7px] text-bronze font-bold">QR CODE</div>
+                <div className="w-10 h-10 bg-bronze/20 rounded-lg border border-bronze/30 flex items-center justify-center text-[7px] text-bronze font-bold">QR</div>
               </div>
-              <button onClick={() => setShowPoster(false)} className="w-full py-4 text-[10px] text-slate-600 font-bold tracking-widest uppercase hover:text-white transition-colors">
-                返回
+              <button onClick={() => setShowPoster(false)} className="w-full py-2 text-[10px] text-slate-600 font-bold tracking-widest uppercase hover:text-white transition-colors">
+                关闭
               </button>
            </div>
         </div>
       )}
-
-      <style jsx global>{`
-        @keyframes scan {
-          0% { transform: translateY(0); opacity: 0; }
-          10% { opacity: 0.8; }
-          90% { opacity: 0.8; }
-          100% { transform: translateY(133px); opacity: 0; }
-        }
-      `}</style>
     </div>
   );
 };
